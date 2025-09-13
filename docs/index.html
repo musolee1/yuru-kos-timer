@@ -1,216 +1,231 @@
-<!DOCTYPE html>
-<html lang="tr">
+<!doctype html>
+
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yürü-Koş Sayaç</title>
-<style>
-  body {
-      margin: 0;
-          font-family: Arial, sans-serif;
-              background: #222;
-                  color: white;
-                      display: flex;
-                          flex-direction: column;
-                              align-items: center;
-                                  justify-content: center;
-                                      height: 100vh;
-                                        }
-                                          .screen { display: none; text-align: center; width: 100%; }
-                                            .active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-                                              h1, h2, h3 { font-size: 8vw; margin: 20px 0; }
-                                                button {
-                                                    font-size: 6vw;
-                                                        padding: 15px 25px;
-                                                            margin: 10px;
-                                                                border: none;
-                                                                    border-radius: 10px;
-                                                                        background: #4cafef;
-                                                                            color: white;
-                                                                                min-width: 150px;
-                                                                                  }
-                                                                                    button:active { background: #3a9ed6; }
-                                                                                      .big-timer { font-size: 20vw; margin: 30px 0; }
-                                                                                        .row { display: flex; justify-content: center; flex-wrap: wrap; }
-                                                                                          select {
-                                                                                              font-size: 6vw;
-                                                                                                  padding: 10px;
-                                                                                                      margin-top: 10px;
-                                                                                                          border-radius: 10px;
-                                                                                                              border: none;
-                                                                                                                }
-                                                                                                                  .time-control {
-                                                                                                                      display: flex;
-                                                                                                                          align-items: center;
-                                                                                                                              gap: 10px;
-                                                                                                                                  justify-content: center;
-                                                                                                                                      margin-bottom: 20px;
-                                                                                                                                        }
-                                                                                                                                          .control-btn { background: #ff9800; }
-                                                                                                                                            .pause-btn { background: #ff4444; }
-                                                                                                                                              .finish-btn { background: #9c27b0; }
-                                                                                                                                              </style>
-                                                                                                                                              </head>
-                                                                                                                                              <body>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sentence Translator — Hover & Select</title>
+  <style>
+    /* Basic layout */
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --accent:#4f46e5;
+      --highlight:#fff7c2;
+      --selected:#ffd8a8;
+      --text:#0f172a;
+      --muted:#6b7280;
+    }
+    html,body{height:100%;}
+    body{
+      margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:linear-gradient(180deg,var(--bg),#eef2ff);
+      color:var(--text);
+      display:flex;align-items:flex-start;justify-content:center;padding:48px;
+    }
+    .app{
+      width:900px;max-width:94%;background:var(--card);border-radius:12px;padding:22px;box-shadow:0 8px 30px rgba(15,23,42,0.08);
+    }
+    h1{margin:0 0 8px;font-size:18px}
+    p.lead{margin:0 0 18px;color:var(--muted);font-size:14px}.pane{display:grid;grid-template-columns:1fr 320px;gap:18px}
 
-                                                                                                                                              <!-- Başlangıç Ekranı -->
-                                                                                                                                              <div id="startScreen" class="screen active">
-                                                                                                                                                <h1>Yürü-Koş Sayaç</h1>
-                                                                                                                                                  <h2>Koşu Süresi</h2>
-                                                                                                                                                    <div class="time-control">
-                                                                                                                                                        <button onclick="changeTime('run', -1)">-</button>
-                                                                                                                                                            <span id="runTimeDisplay">3</span> dk
-                                                                                                                                                                <button onclick="changeTime('run', 1)">+</button>
-                                                                                                                                                                  </div>
-                                                                                                                                                                    <select id="runSelect" onchange="setTimeFromSelect('run')">
-                                                                                                                                                                        <option value="1">1 dk</option>
-                                                                                                                                                                            <option value="2">2 dk</option>
-                                                                                                                                                                                <option value="3" selected>3 dk</option>
-                                                                                                                                                                                    <option value="4">4 dk</option>
-                                                                                                                                                                                        <option value="5">5 dk</option>
-                                                                                                                                                                                            <option value="6">6 dk</option>
-                                                                                                                                                                                                <option value="7">7 dk</option>
-                                                                                                                                                                                                    <option value="8">8 dk</option>
-                                                                                                                                                                                                        <option value="9">9 dk</option>
-                                                                                                                                                                                                            <option value="10">10 dk</option>
-                                                                                                                                                                                                              </select>
+.text-area{padding:14px;border-radius:8px;background:#fbfbff;border:1px solid #eef2ff;min-height:240px}
+.sentence{padding:4px 6px;border-radius:6px;cursor:pointer;display:inline-block;margin-right:4px;margin-bottom:6px}
+.sentence:hover{background:rgba(79,70,229,0.07);}
+.sentence.highlight{background:var(--highlight);}
+.sentence.selected{background:var(--selected);border:1px solid rgba(15,23,42,0.06);}
 
-                                                                                                                                                                                                                <h2>Yürüyüş Süresi</h2>
-                                                                                                                                                                                                                  <div class="time-control">
-                                                                                                                                                                                                                      <button onclick="changeTime('walk', -1)">-</button>
-                                                                                                                                                                                                                          <span id="walkTimeDisplay">2</span> dk
-                                                                                                                                                                                                                              <button onclick="changeTime('walk', 1)">+</button>
-                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                  <select id="walkSelect" onchange="setTimeFromSelect('walk')">
-                                                                                                                                                                                                                                      <option value="1">1 dk</option>
-                                                                                                                                                                                                                                          <option value="2" selected>2 dk</option>
-                                                                                                                                                                                                                                              <option value="3">3 dk</option>
-                                                                                                                                                                                                                                                  <option value="4">4 dk</option>
-                                                                                                                                                                                                                                                      <option value="5">5 dk</option>
-                                                                                                                                                                                                                                                          <option value="6">6 dk</option>
-                                                                                                                                                                                                                                                              <option value="7">7 dk</option>
-                                                                                                                                                                                                                                                                  <option value="8">8 dk</option>
-                                                                                                                                                                                                                                                                      <option value="9">9 dk</option>
-                                                                                                                                                                                                                                                                          <option value="10">10 dk</option>
-                                                                                                                                                                                                                                                                            </select>
+.panel{background:linear-gradient(180deg,#ffffff,#fbfbff);border-radius:8px;padding:12px;border:1px solid #eef2ff}
+.panel h2{font-size:14px;margin:0 0 8px}
+.translation{min-height:120px;padding:10px;border-radius:6px;background:#fff;border:1px dashed #eef2ff;color:var(--text)}
+.meta{font-size:13px;color:var(--muted);margin-top:8px}
 
-                                                                                                                                                                                                                                                                              <button onclick="startTimer()">Başla</button>
-                                                                                                                                                                                                                                                                              </div>
+.controls{display:flex;gap:8px;margin-top:10px}
+button{background:var(--accent);color:white;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(79,70,229,0.12)}
 
-                                                                                                                                                                                                                                                                              <!-- Sayaç Ekranı -->
-                                                                                                                                                                                                                                                                              <div id="timerScreen" class="screen">
-                                                                                                                                                                                                                                                                                <h1 id="phaseTitle">Koş</h1>
-                                                                                                                                                                                                                                                                                  <div class="big-timer" id="countdown">03:00</div>
-                                                                                                                                                                                                                                                                                    <div class="row">
-                                                                                                                                                                                                                                                                                        <button class="control-btn" onclick="switchPhase('walk')">Yürüyüşe Geç</button>
-                                                                                                                                                                                                                                                                                            <button class="pause-btn" onclick="togglePause()">⏸</button>
-                                                                                                                                                                                                                                                                                                <button class="control-btn" onclick="switchPhase('run')">Koşuya Geç</button>
-                                                                                                                                                                                                                                                                                                  </div>
-                                                                                                                                                                                                                                                                                                    <div class="row" id="finishRow" style="display:none;">
-                                                                                                                                                                                                                                                                                                        <button class="finish-btn" onclick="finishWorkout()">Finish</button>
-                                                                                                                                                                                                                                                                                                          </div>
-                                                                                                                                                                                                                                                                                                          </div>
+/* Tooltip bubble near cursor */
+.tooltip{
+  position:fixed;z-index:40;pointer-events:none;padding:8px 10px;border-radius:8px;background:rgba(17,24,39,0.95);color:white;font-size:13px;max-width:320px;box-shadow:0 8px 30px rgba(15,23,42,0.25);
+  transform:translate(-50%, -130%);opacity:0;transition:opacity 160ms ease,transform 160ms ease;
+}
+.tooltip.show{opacity:1;transform:translate(-50%,-150%)}
 
-                                                                                                                                                                                                                                                                                                          <!-- Sonuç Ekranı -->
-                                                                                                                                                                                                                                                                                                          <div id="resultScreen" class="screen">
-                                                                                                                                                                                                                                                                                                            <h1>Sonuçlar</h1>
-                                                                                                                                                                                                                                                                                                              <h2 id="totalTime"></h2>
-                                                                                                                                                                                                                                                                                                                <h2 id="totalRuns"></h2>
-                                                                                                                                                                                                                                                                                                                  <h2 id="totalWalks"></h2>
-                                                                                                                                                                                                                                                                                                                    <button onclick="showScreen('start')">Başa Dön</button>
-                                                                                                                                                                                                                                                                                                                    </div>
+/* small responsive tweaks */
+@media (max-width:820px){
+  .pane{grid-template-columns:1fr}
+}
 
-                                                                                                                                                                                                                                                                                                                    <script>
-                                                                                                                                                                                                                                                                                                                    let runMinutes = 3;
-                                                                                                                                                                                                                                                                                                                    let walkMinutes = 2;
-                                                                                                                                                                                                                                                                                                                    let currentPhase = 'run';
-                                                                                                                                                                                                                                                                                                                    let timeLeft = runMinutes * 60;
-                                                                                                                                                                                                                                                                                                                    let timerInterval;
-                                                                                                                                                                                                                                                                                                                    let paused = false;
-                                                                                                                                                                                                                                                                                                                    let totalSeconds = 0;
-                                                                                                                                                                                                                                                                                                                    let runCount = 0, walkCount = 0;
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Sentence Translator — Hover to preview, click to select</h1>
+    <p class="lead">Hover over a sentence to see its translation. Click a sentence to select and highlight it. Replace the englishText & turkishText arrays with your own data or hook up to a database later.</p><div class="pane">
+  <div>
+    <div class="text-area" id="englishContainer" aria-label="English text container">
+      <!-- Sentences will be injected here -->
+    </div>
 
-                                                                                                                                                                                                                                                                                                                    function showScreen(screen) {
-                                                                                                                                                                                                                                                                                                                      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-                                                                                                                                                                                                                                                                                                                        document.getElementById(screen + 'Screen').classList.add('active');
-                                                                                                                                                                                                                                                                                                                        }
+    <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button id="clearSelection" class="ghost">Clear Selection</button>
+      <button id="downloadHtml">Download HTML</button>
+      <div style="flex:1"></div>
+      <div class="meta">Sentences: <span id="count">0</span></div>
+    </div>
+  </div>
 
-                                                                                                                                                                                                                                                                                                                        function changeTime(type, diff) {
-                                                                                                                                                                                                                                                                                                                          if (type === 'run') {
-                                                                                                                                                                                                                                                                                                                              runMinutes = Math.min(10, Math.max(1, runMinutes + diff));
-                                                                                                                                                                                                                                                                                                                                  document.getElementById('runTimeDisplay').innerText = runMinutes;
-                                                                                                                                                                                                                                                                                                                                      document.getElementById('runSelect').value = runMinutes;
-                                                                                                                                                                                                                                                                                                                                        } else {
-                                                                                                                                                                                                                                                                                                                                            walkMinutes = Math.min(10, Math.max(1, walkMinutes + diff));
-                                                                                                                                                                                                                                                                                                                                                document.getElementById('walkTimeDisplay').innerText = walkMinutes;
-                                                                                                                                                                                                                                                                                                                                                    document.getElementById('walkSelect').value = walkMinutes;
-                                                                                                                                                                                                                                                                                                                                                      }
-                                                                                                                                                                                                                                                                                                                                                      }
+  <div class="panel">
+    <h2>Translation</h2>
+    <div class="translation" id="translationBox">Hover a sentence to see its translation here.</div>
+    <div class="meta">Selected sentence index: <span id="selIdx">—</span></div>
+  </div>
+</div>
 
-                                                                                                                                                                                                                                                                                                                                                      function setTimeFromSelect(type) {
-                                                                                                                                                                                                                                                                                                                                                        if (type === 'run') {
-                                                                                                                                                                                                                                                                                                                                                            runMinutes = parseInt(document.getElementById('runSelect').value);
-                                                                                                                                                                                                                                                                                                                                                                document.getElementById('runTimeDisplay').innerText = runMinutes;
-                                                                                                                                                                                                                                                                                                                                                                  } else {
-                                                                                                                                                                                                                                                                                                                                                                      walkMinutes = parseInt(document.getElementById('walkSelect').value);
-                                                                                                                                                                                                                                                                                                                                                                          document.getElementById('walkTimeDisplay').innerText = walkMinutes;
-                                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                                            }
+  </div>  <div class="tooltip" id="tooltip" role="tooltip"></div>  <script>
+    /*****************************************************************
+     * DATA: Replace these variables with your own content or later
+     * load from a database. For now they are arrays of sentences.
+     *****************************************************************/
 
-                                                                                                                                                                                                                                                                                                                                                                            function startTimer() {
-                                                                                                                                                                                                                                                                                                                                                                              currentPhase = 'run';
-                                                                                                                                                                                                                                                                                                                                                                                timeLeft = runMinutes * 60;
-                                                                                                                                                                                                                                                                                                                                                                                  runCount = 0; walkCount = 0; totalSeconds = 0;
-                                                                                                                                                                                                                                                                                                                                                                                    updateDisplay();
-                                                                                                                                                                                                                                                                                                                                                                                      showScreen('timer');
-                                                                                                                                                                                                                                                                                                                                                                                        startCountdown();
-                                                                                                                                                                                                                                                                                                                                                                                        }
+    const englishText = [
+      "Last weekend, my friend tried to persuade me to go hiking with her.",
+      "At first, I didn’t want to, but later I felt grateful because it turned out to be a wonderful experience.",
+      "Hiking is popular worldwide, and many people see it as a way to escape daily problems and issues.",
+      "The trail was slightly wet because it had rained the night before, and there was a lot of mud on the ground.",
+      "Walking there wasn’t very convenient, but we laughed about it.",
+      "At one point, I accidentally stepped backwards and almost fell.",
+      "We decided to walk further up the mountain, even though the path was rough.",
+      "When we finally reached the top, the view was amazing.",
+      "I realized that sometimes a little discomfort is worth it for a great memory."
+    ];
 
-                                                                                                                                                                                                                                                                                                                                                                                        function startCountdown() {
-                                                                                                                                                                                                                                                                                                                                                                                          clearInterval(timerInterval);
-                                                                                                                                                                                                                                                                                                                                                                                            timerInterval = setInterval(() => {
-                                                                                                                                                                                                                                                                                                                                                                                                if (!paused) {
-                                                                                                                                                                                                                                                                                                                                                                                                      timeLeft--;
-                                                                                                                                                                                                                                                                                                                                                                                                            totalSeconds++;
-                                                                                                                                                                                                                                                                                                                                                                                                                  if (timeLeft <= 0) {
-                                                                                                                                                                                                                                                                                                                                                                                                                          if (currentPhase === 'run') {
-                                                                                                                                                                                                                                                                                                                                                                                                                                    runCount++;
-                                                                                                                                                                                                                                                                                                                                                                                                                                              switchPhase('walk');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                      } else {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                walkCount++;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                          switchPhase('run');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              updateDisplay();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }, 1000);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+    const turkishText = [
+      "Geçen hafta sonu, arkadaşım beni onunla yürüyüşe gitmeye ikna etmeye çalıştı.",
+      "İlk başta istemedim ama sonradan minnettar hissettim çünkü harika bir deneyim oldu.",
+      "Yürüyüş, dünya çapında popülerdir ve birçok insan bunu günlük sorunlardan ve konulardan uzaklaşmanın bir yolu olarak görür.",
+      "Yol, bir gece önce yağmur yağdığı için hafifçe ıslaktı ve yerde çok fazla çamur vardı.",
+      "Orada yürümek çok uygun değildi ama bu durumla dalga geçtik.",
+      "Bir noktada yanlışlıkla geriye doğru adım attım ve neredeyse düştüm.",
+      "Dağın daha da yukarısına doğru yürümeye karar verdik, her ne kadar yol pürüzlü olsa da.",
+      "En sonunda zirveye ulaştığımızda manzara inanılmazdı.",
+      "O an şunu fark ettim: Bazen biraz rahatsızlık, harika bir anı için değer."
+    ];
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    function updateDisplay() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      document.getElementById('phaseTitle').innerText = currentPhase === 'run' ? "Koş" : "Yürü";
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        let min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          let sec = String(timeLeft % 60).padStart(2, '0');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            document.getElementById('countdown').innerText = `${min}:${sec}`;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
+    // --- State ---
+    let selectedIndex = null;
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            function switchPhase(phase) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              currentPhase = phase;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                timeLeft = (phase === 'run' ? runMinutes : walkMinutes) * 60;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  updateDisplay();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }
+    // DOM refs
+    const container = document.getElementById('englishContainer');
+    const translationBox = document.getElementById('translationBox');
+    const countSpan = document.getElementById('count');
+    const selIdx = document.getElementById('selIdx');
+    const tooltip = document.getElementById('tooltip');
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  function togglePause() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    paused = !paused;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      document.getElementById('finishRow').style.display = paused ? 'flex' : 'none';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      }
+    function renderSentences(){
+      container.innerHTML = '';
+      englishText.forEach((s, i) =>{
+        const span = document.createElement('span');
+        span.className = 'sentence';
+        span.setAttribute('data-idx', i);
+        span.setAttribute('tabindex', 0);
+        span.textContent = s + ' ';
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      function finishWorkout() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        clearInterval(timerInterval);
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          document.getElementById('totalTime').innerText = `Toplam Süre: ${Math.floor(totalSeconds / 60)} dk ${totalSeconds % 60} sn`;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            document.getElementById('totalRuns').innerText = `Koşu Turları: ${runCount}`;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              document.getElementById('totalWalks').innerText = `Yürüyüş Turları: ${walkCount}`;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                showScreen('result');
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>
+        // events
+        span.addEventListener('mouseenter', onHover);
+        span.addEventListener('mousemove', onMove);
+        span.addEventListener('mouseleave', onLeave);
+        span.addEventListener('click', onClick);
+        span.addEventListener('focus', onHover);
+        span.addEventListener('blur', onLeave);
+        span.addEventListener('keydown', (e)=>{ if(e.key==='Enter') onClick(e); });
+
+        container.appendChild(span);
+      });
+      countSpan.textContent = englishText.length;
+    }
+
+    function onHover(e){
+      const el = e.currentTarget;
+      const idx = Number(el.dataset.idx);
+      // show translation in side panel
+      translationBox.textContent = turkishText[idx] || 'Çeviri bulunamadı.';
+      // visually highlight (temporary)
+      document.querySelectorAll('.sentence').forEach(s=>s.classList.remove('highlight'));
+      el.classList.add('highlight');
+
+      // tooltip
+      tooltip.textContent = turkishText[idx] || '';
+      tooltip.classList.add('show');
+      positionTooltip(e);
+    }
+
+    function onMove(e){ positionTooltip(e); }
+
+    function onLeave(e){
+      const el = e.currentTarget;
+      el.classList.remove('highlight');
+      tooltip.classList.remove('show');
+      // clear side translation if nothing selected
+      if(selectedIndex === null){ translationBox.textContent = 'Hover a sentence to see its translation here.' }
+    }
+
+    function onClick(e){
+      const el = e.currentTarget;
+      const idx = Number(el.dataset.idx);
+      // toggle selection
+      if(selectedIndex === idx){
+        selectedIndex = null;
+      } else {
+        selectedIndex = idx;
+      }
+      applySelectionStyles();
+    }
+
+    function applySelectionStyles(){
+      document.querySelectorAll('.sentence').forEach(s=>{
+        const idx = Number(s.dataset.idx);
+        s.classList.toggle('selected', selectedIndex === idx);
+      });
+      selIdx.textContent = selectedIndex === null ? '—' : selectedIndex + 1;
+      if(selectedIndex !== null){
+        translationBox.textContent = turkishText[selectedIndex] || '';
+      }
+    }
+
+    function positionTooltip(e){
+      const x = e.clientX;
+      const y = e.clientY;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+
+    // Controls
+    document.getElementById('clearSelection').addEventListener('click', ()=>{
+      selectedIndex = null;applySelectionStyles();
+    });
+
+    document.getElementById('downloadHtml').addEventListener('click', ()=>{
+      // download the current page HTML with the current data arrays embedded
+      const html = `<!doctype html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Export</title></head><body><pre>${escapeHtml(JSON.stringify({englishText,turkishText},null,2))}</pre></body></html>`;const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'export.html'; a.click(); URL.revokeObjectURL(url);
+});
+
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// initial render
+renderSentences();
+
+// Accessibility: click outside to clear highlight preview (not selection)
+document.addEventListener('click', (e)=>{
+  if(!container.contains(e.target)){
+    document.querySelectorAll('.sentence').forEach(s=>s.classList.remove('highlight'));
+    tooltip.classList.remove('show');
+    if(selectedIndex === null) translationBox.textContent = 'Hover a sentence to see its translation here.';
+  }
+});
+
+  </script>
+</body>
+</html>
