@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sentence Translator — Hover & Select</title>
   <style>
-    /* Basic layout */
     :root{
       --bg:#f6f7fb;
       --card:#ffffff;
@@ -16,78 +15,79 @@
       --text:#0f172a;
       --muted:#6b7280;
     }
-    html,body{height:100%;}
     body{
-      margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:linear-gradient(180deg,var(--bg),#eef2ff);
-      color:var(--text);
-      display:flex;align-items:flex-start;justify-content:center;padding:48px;
+      margin:0;font-family:Inter, sans-serif;background:linear-gradient(180deg,var(--bg),#eef2ff);color:var(--text);
+      display:flex;align-items:flex-start;justify-content:center;padding:32px;
     }
     .app{
-      width:900px;max-width:94%;background:var(--card);border-radius:12px;padding:22px;box-shadow:0 8px 30px rgba(15,23,42,0.08);
+      width:950px;max-width:96%;background:var(--card);border-radius:12px;padding:24px;box-shadow:0 8px 30px rgba(15,23,42,0.08);
     }
-    h1{margin:0 0 8px;font-size:18px}
-    p.lead{margin:0 0 18px;color:var(--muted);font-size:14px}.pane{display:grid;grid-template-columns:1fr 320px;gap:18px}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:6px 0 16px;color:var(--muted);font-size:14px}.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.level{font-size:13px;color:var(--accent);background:rgba(79,70,229,0.08);padding:2px 8px;border-radius:8px}
+.star{cursor:pointer;font-size:20px;color:#d1d5db;transition:color .2s}
+.star.active{color:#fbbf24}
 
-.text-area{padding:14px;border-radius:8px;background:#fbfbff;border:1px solid #eef2ff;min-height:240px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 20px}
+.chip{padding:6px 10px;background:#f3f4f6;border-radius:16px;font-size:13px;cursor:pointer;transition:background .2s}
+.chip:hover{background:rgba(79,70,229,0.15)}
+
+.pane{display:grid;grid-template-columns:1fr 300px;gap:18px}
+
+.text-area{padding:14px;border-radius:8px;background:#fbfbff;border:1px solid #eef2ff;min-height:180px}
 .sentence{padding:4px 6px;border-radius:6px;cursor:pointer;display:inline-block;margin-right:4px;margin-bottom:6px}
 .sentence:hover{background:rgba(79,70,229,0.07);}
 .sentence.highlight{background:var(--highlight);}
 .sentence.selected{background:var(--selected);border:1px solid rgba(15,23,42,0.06);}
 
-.panel{background:linear-gradient(180deg,#ffffff,#fbfbff);border-radius:8px;padding:12px;border:1px solid #eef2ff}
+.panel{background:#fff;border-radius:8px;padding:12px;border:1px solid #eef2ff}
 .panel h2{font-size:14px;margin:0 0 8px}
-.translation{min-height:120px;padding:10px;border-radius:6px;background:#fff;border:1px dashed #eef2ff;color:var(--text)}
+.translation{min-height:120px;padding:10px;border-radius:6px;background:#f9fafb;border:1px dashed #eef2ff;color:var(--text)}
 .meta{font-size:13px;color:var(--muted);margin-top:8px}
 
-.controls{display:flex;gap:8px;margin-top:10px}
-button{background:var(--accent);color:white;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
-button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(79,70,229,0.12)}
+.form{margin-top:32px;padding:16px;background:#fafafa;border:1px solid #e5e7eb;border-radius:8px}
+.form h2{margin:0 0 12px;font-size:16px}
+.form input,.form textarea{width:100%;margin-bottom:10px;padding:8px;border:1px solid #d1d5db;border-radius:6px;font-size:14px}
+.form button{background:var(--accent);color:#fff;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
 
-/* Tooltip bubble near cursor */
-.tooltip{
-  position:fixed;z-index:40;pointer-events:none;padding:8px 10px;border-radius:8px;background:rgba(17,24,39,0.95);color:white;font-size:13px;max-width:320px;box-shadow:0 8px 30px rgba(15,23,42,0.25);
-  transform:translate(-50%, -130%);opacity:0;transition:opacity 160ms ease,transform 160ms ease;
-}
-.tooltip.show{opacity:1;transform:translate(-50%,-150%)}
+.tooltip{position:fixed;z-index:40;pointer-events:none;padding:6px 8px;border-radius:6px;background:rgba(17,24,39,0.95);color:white;font-size:12px;max-width:240px;box-shadow:0 8px 20px rgba(0,0,0,0.25);opacity:0;transition:opacity 0.15s ease}
+.tooltip.show{opacity:1}
 
-/* small responsive tweaks */
-@media (max-width:820px){
-  .pane{grid-template-columns:1fr}
-}
+@media (max-width:820px){.pane{grid-template-columns:1fr}}
 
   </style>
 </head>
 <body>
   <div class="app">
-    <h1>Sentence Translator — Hover to preview, click to select</h1>
-    <p class="lead">Hover over a sentence to see its translation. Click a sentence to select and highlight it. Replace the englishText & turkishText arrays with your own data or hook up to a database later.</p><div class="pane">
+    <div class="header">
+      <h1 id="title">Weekend Hiking Story</h1>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="level" id="level">B1-B2 Level</div>
+        <div id="starBtn" class="star">★</div>
+      </div>
+    </div>
+    <p class="lead">Hover over a sentence or keyword to see its translation. Click to select.</p><div class="chips" id="keywords"></div>
+
+<div class="pane">
   <div>
-    <div class="text-area" id="englishContainer" aria-label="English text container">
-      <!-- Sentences will be injected here -->
-    </div>
-
-    <div style="margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <button id="clearSelection" class="ghost">Clear Selection</button>
-      <button id="downloadHtml">Download HTML</button>
-      <div style="flex:1"></div>
-      <div class="meta">Sentences: <span id="count">0</span></div>
-    </div>
+    <div class="text-area" id="englishContainer"></div>
   </div>
-
   <div class="panel">
     <h2>Translation</h2>
-    <div class="translation" id="translationBox">Hover a sentence to see its translation here.</div>
-    <div class="meta">Selected sentence index: <span id="selIdx">—</span></div>
+    <div class="translation" id="translationBox">Hover a sentence or keyword…</div>
   </div>
 </div>
 
-  </div>  <div class="tooltip" id="tooltip" role="tooltip"></div>  <script>
-    /*****************************************************************
-     * DATA: Replace these variables with your own content or later
-     * load from a database. For now they are arrays of sentences.
-     *****************************************************************/
+<form class="form" id="newTextForm">
+  <h2>+ Yeni Metin Ekle</h2>
+  <input type="text" id="newTitle" placeholder="Başlık" required />
+  <input type="text" id="newLevel" placeholder="Seviye (örn: B1)" required />
+  <textarea id="newEnglish" placeholder="İngilizce metin" rows="3" required></textarea>
+  <textarea id="newTurkish" placeholder="Türkçe metin" rows="3" required></textarea>
+  <button type="submit">Oluştur</button>
+</form>
 
+  </div>  <div class="tooltip" id="tooltip"></div>  <script>
     const englishText = [
       "Last weekend, my friend tried to persuade me to go hiking with her.",
       "At first, I didn’t want to, but later I felt grateful because it turned out to be a wonderful experience.",
@@ -112,120 +112,101 @@ button.ghost{background:transparent;color:var(--accent);border:1px solid rgba(79
       "O an şunu fark ettim: Bazen biraz rahatsızlık, harika bir anı için değer."
     ];
 
-    // --- State ---
-    let selectedIndex = null;
+    const keywords = [
+      {en:"persuade", tr:"ikna etmek"},
+      {en:"grateful", tr:"minnettar"},
+      {en:"worldwide", tr:"dünya çapında"},
+      {en:"issue", tr:"konu"},
+      {en:"slightly", tr:"hafifçe"},
+      {en:"mud", tr:"çamur"},
+      {en:"convenient", tr:"uygun"},
+      {en:"backwards", tr:"geriye doğru"},
+      {en:"further", tr:"daha fazla"},
+      {en:"rough", tr:"pürüzlü"}
+    ];
 
-    // DOM refs
     const container = document.getElementById('englishContainer');
     const translationBox = document.getElementById('translationBox');
-    const countSpan = document.getElementById('count');
-    const selIdx = document.getElementById('selIdx');
     const tooltip = document.getElementById('tooltip');
+    const starBtn = document.getElementById('starBtn');
+    const keywordsDiv = document.getElementById('keywords');
+
+    let selectedIndex = null;
 
     function renderSentences(){
       container.innerHTML = '';
       englishText.forEach((s, i) =>{
         const span = document.createElement('span');
         span.className = 'sentence';
-        span.setAttribute('data-idx', i);
-        span.setAttribute('tabindex', 0);
-        span.textContent = s + ' ';
+        span.dataset.idx = i;
+        span.textContent = s;
 
-        // events
-        span.addEventListener('mouseenter', onHover);
-        span.addEventListener('mousemove', onMove);
-        span.addEventListener('mouseleave', onLeave);
-        span.addEventListener('click', onClick);
-        span.addEventListener('focus', onHover);
-        span.addEventListener('blur', onLeave);
-        span.addEventListener('keydown', (e)=>{ if(e.key==='Enter') onClick(e); });
+        span.addEventListener('mouseenter', ()=>showTranslation(turkishText[i]));
+        span.addEventListener('mouseleave', ()=>{ if(selectedIndex===null) translationBox.textContent="Hover a sentence or keyword…" });
+        span.addEventListener('click', ()=>{
+          selectedIndex = i;
+          applySelection();
+        });
 
         container.appendChild(span);
       });
-      countSpan.textContent = englishText.length;
     }
 
-    function onHover(e){
-      const el = e.currentTarget;
-      const idx = Number(el.dataset.idx);
-      // show translation in side panel
-      translationBox.textContent = turkishText[idx] || 'Çeviri bulunamadı.';
-      // visually highlight (temporary)
-      document.querySelectorAll('.sentence').forEach(s=>s.classList.remove('highlight'));
-      el.classList.add('highlight');
-
-      // tooltip
-      tooltip.textContent = turkishText[idx] || '';
-      tooltip.classList.add('show');
-      positionTooltip(e);
-    }
-
-    function onMove(e){ positionTooltip(e); }
-
-    function onLeave(e){
-      const el = e.currentTarget;
-      el.classList.remove('highlight');
-      tooltip.classList.remove('show');
-      // clear side translation if nothing selected
-      if(selectedIndex === null){ translationBox.textContent = 'Hover a sentence to see its translation here.' }
-    }
-
-    function onClick(e){
-      const el = e.currentTarget;
-      const idx = Number(el.dataset.idx);
-      // toggle selection
-      if(selectedIndex === idx){
-        selectedIndex = null;
-      } else {
-        selectedIndex = idx;
-      }
-      applySelectionStyles();
-    }
-
-    function applySelectionStyles(){
-      document.querySelectorAll('.sentence').forEach(s=>{
-        const idx = Number(s.dataset.idx);
-        s.classList.toggle('selected', selectedIndex === idx);
+    function renderKeywords(){
+      keywordsDiv.innerHTML='';
+      keywords.forEach((k, idx)=>{
+        const chip=document.createElement('div');
+        chip.className='chip';
+        chip.textContent=k.en;
+        chip.addEventListener('mouseenter', ()=>showTranslation(k.tr));
+        chip.addEventListener('mouseleave', ()=>{ if(selectedIndex===null) translationBox.textContent="Hover a sentence or keyword…" });
+        chip.addEventListener('click', ()=>{
+          selectedIndex = 'kw'+idx;
+          translationBox.textContent=k.tr;
+        });
+        keywordsDiv.appendChild(chip);
       });
-      selIdx.textContent = selectedIndex === null ? '—' : selectedIndex + 1;
-      if(selectedIndex !== null){
-        translationBox.textContent = turkishText[selectedIndex] || '';
+    }
+
+    function showTranslation(text){ translationBox.textContent=text; }
+
+    function applySelection(){
+      document.querySelectorAll('.sentence').forEach((s, i)=>{
+        s.classList.toggle('selected', selectedIndex===i);
+      });
+      if(selectedIndex!==null && typeof selectedIndex==="number"){
+        translationBox.textContent=turkishText[selectedIndex];
       }
     }
 
-    function positionTooltip(e){
-      const x = e.clientX;
-      const y = e.clientY;
-      tooltip.style.left = x + 'px';
-      tooltip.style.top = y + 'px';
+    // Star feature (localStorage)
+    function loadStar(){
+      const starred = localStorage.getItem('starred')==='true';
+      starBtn.classList.toggle('active',starred);
     }
-
-    // Controls
-    document.getElementById('clearSelection').addEventListener('click', ()=>{
-      selectedIndex = null;applySelectionStyles();
+    starBtn.addEventListener('click',()=>{
+      const active = starBtn.classList.toggle('active');
+      localStorage.setItem('starred', active);
     });
 
-    document.getElementById('downloadHtml').addEventListener('click', ()=>{
-      // download the current page HTML with the current data arrays embedded
-      const html = `<!doctype html>\n<html lang=\"en\">\n<head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Export</title></head><body><pre>${escapeHtml(JSON.stringify({englishText,turkishText},null,2))}</pre></body></html>`;const blob = new Blob([html], {type:'text/html'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'export.html'; a.click(); URL.revokeObjectURL(url);
-});
+    // New text form
+    document.getElementById('newTextForm').addEventListener('submit',(e)=>{
+      e.preventDefault();
+      const title=document.getElementById('newTitle').value;
+      const level=document.getElementById('newLevel').value;
+      const en=document.getElementById('newEnglish').value.split('.').map(s=>s.trim()).filter(Boolean);
+      const tr=document.getElementById('newTurkish').value.split('.').map(s=>s.trim()).filter(Boolean);
+      document.getElementById('title').textContent=title;
+      document.getElementById('level').textContent=level;
+      englishText.splice(0,englishText.length,...en);
+      turkishText.splice(0,turkishText.length,...tr);
+      renderSentences();
+      translationBox.textContent="Hover a sentence or keyword…";
+      e.target.reset();
+    });
 
-function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// initial render
-renderSentences();
-
-// Accessibility: click outside to clear highlight preview (not selection)
-document.addEventListener('click', (e)=>{
-  if(!container.contains(e.target)){
-    document.querySelectorAll('.sentence').forEach(s=>s.classList.remove('highlight'));
-    tooltip.classList.remove('show');
-    if(selectedIndex === null) translationBox.textContent = 'Hover a sentence to see its translation here.';
-  }
-});
-
-  </script>
-</body>
+    renderSentences();
+    renderKeywords();
+    loadStar();
+  </script></body>
 </html>
